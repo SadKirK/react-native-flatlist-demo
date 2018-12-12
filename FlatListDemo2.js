@@ -3,7 +3,6 @@ import { View, Text, FlatList, ActivityIndicator } from "react-native";
 //import { List, ListItem, SearchBar } from "react-native-elements";
 import Swipeout from "react-native-swipeout";
 import uuid from "uuid/v4";
-import { RecyclerListView, DataProvider } from "recyclerlistview";
 
 class FlatListDemo extends Component {
   constructor(props) {
@@ -15,10 +14,7 @@ class FlatListDemo extends Component {
       page: 1,
       seed: 1,
       error: null,
-      refreshing: false,
-      dataProvider: new DataProvider((r1, r2) => {
-        return r1 !== r2;
-      })
+      refreshing: false
     };
   }
 
@@ -87,21 +83,6 @@ class FlatListDemo extends Component {
     );
   };
 
-  rowRenderer = (type, data) => {
-    //We have only one view type so not checks are needed here
-    return (
-      <Swipeout
-        right={swipeoutBtnsRight}
-        left={swipeoutBtnsLeft}
-        style={{ height: 50 }}
-      >
-        <View style={{ height: 50 }}>
-          <Text style={{ height: 50 }}>{item.noteId}</Text>
-        </View>
-      </Swipeout>
-    );
-  };
-
   renderHeader = () => {
     return <SearchBar placeholder="Type Here..." lightTheme round />;
   };
@@ -128,8 +109,7 @@ class FlatListDemo extends Component {
 
   onSwipeClose(item, rowId, direction) {
     if (
-      item.noteId === this.state.activeRow &&
-      typeof direction !== "undefined"
+      item.noteId === this.state.activeRow && typeof direction !== "undefined"
     ) {
       this.setState({ activeRow: null });
     }
@@ -138,43 +118,34 @@ class FlatListDemo extends Component {
   render() {
     var swipeoutBtnsRight = [
       {
-        text: "Reboot"
+        text: 'Reboot'
       },
       {
-        text: "Shutdown"
+        text: 'Shutdown'
       }
     ];
     var swipeoutBtnsLeft = [
       {
-        text: "Messages"
+        text: 'Messages'
       }
     ];
 
     return (
-      //   <FlatList
-      //     data={this.state.data}
-      //     renderItem={({ item }) => (
-      //       <Swipeout right={swipeoutBtnsRight} left={swipeoutBtnsLeft} style={{height:50}}>
-      //         <View style={{height:50}}>
-      //           <Text style={{height:50}}>{item.noteId}</Text>
-      //         </View>
-      //       </Swipeout>
-      //     )}
-      //     keyExtractor={item => item.noteId}
-      //     ItemSeparatorComponent={this.renderSeparator}
-      //     onRefresh={this.handleRefresh}
-      //     refreshing={this.state.refreshing}
-      //     onEndReached={this.handleLoadMore}
-      //     onEndReachedThreshold={50}
-      //   />
-      <RecyclerListView
-        style={{ flex: 1 }}
-        //contentContainerStyle={{ margin: 3 }}
+      <FlatList
+        data={this.state.data}
+        renderItem={({ item }) => (
+          <Swipeout right={swipeoutBtnsRight} left={swipeoutBtnsLeft} style={{height:50}}>
+            <View style={{height:50}}>
+              <Text style={{height:50}}>{item.noteId}</Text>
+            </View>
+          </Swipeout>
+        )}
+        keyExtractor={item => item.noteId}
+        ItemSeparatorComponent={this.renderSeparator}
+        onRefresh={this.handleRefresh}
+        refreshing={this.state.refreshing}
         onEndReached={this.handleLoadMore}
-        dataProvider={this.state.dataProvider}
-        //layoutProvider={this.state.layoutProvider}
-        rowRenderer={this.rowRenderer}
-        renderFooter={this.renderFooter}
+        onEndReachedThreshold={50}
       />
     );
   }
